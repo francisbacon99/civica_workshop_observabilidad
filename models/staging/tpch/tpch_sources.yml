@@ -52,7 +52,22 @@ sources:
             description: '{{ doc("comment") }}'
           - name: ingest_timestamp
             description: "the timestamp when the data was ingested into the system"
-          
+        tests:
+          - elementary.volume_anomalies:
+              timestamp_column: "ingest_timestamp"
+              time_bucket:
+                period: hour  # Establecemos la segmentación horaria
+                count: 1  # Un solo bucket por hora
+              detection_period:
+                period: day  # Monitoreo en ventanas de 2 horas
+                count: 1  # Detección de anomalías en las últimas 2 horas
+              training_period:
+                period: day  # Entrenamiento cada semana
+                count: 7  # Aprender los últimos 7 días
+              fail_on_zero: true  # Falla si el volumen es 0 (sin datos)
+              tags: ["elementary"]
+              config:
+                severity: warn
       - name: customer
         description: main customer table
         columns:
@@ -251,3 +266,5 @@ sources:
             description: '{{ doc("comment") }}'
           - name: ingest_timestamp
             description: "the timestamp when the data was ingested into the system"
+
+  
